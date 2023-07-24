@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Daktari Mkononi</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Daktari Mkononi</h1>
+        <!-- Add your logos here -->
+        <img src="static/safaricom.png" alt="Safaricom" width="100px" height="90px">
+        <img src="static/mkafrica.png" alt="Mk Afrika" width="100px" height="90px">
+        <img src="logo2.png" alt="Group 8">
+    </header>
+    <main>
+        <div id="chatbox">
+            <div class="chatlog" id="chatlog">
+                <p class="bot-message">DAKTARI: Hello! I'm here to assist you with health-related queries. How can I help you today?</p>
+            </div>
+            <input type="text" id="user_input" placeholder="Type your message..." autofocus>
+            <button id="send_button" onclick="sendMessage()">Send</button>
+        </div>
+    </main>
+    <script>
+        function appendMessage(sender, message) {
+            var chatlog = document.getElementById('chatlog');
+            var p = document.createElement('p');
+            p.className = sender + '-message';
+            p.textContent = sender + ': ' + message;
+            chatlog.appendChild(p);
+            chatlog.scrollTop = chatlog.scrollHeight;
+        }
+
+        function sendMessage() {
+            var user_input = document.getElementById('user_input');
+            var message = user_input.value.trim();
+            if (message === '') return;
+            appendMessage('You', message);
+            user_input.value = '';
+
+            fetch('/get_bot_response', {
+                method: 'POST',
+                body: new URLSearchParams({ 'user_input': message }),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                appendMessage('DAKTARI', data.bot_response);
+            });
+        }
+
+        document.getElementById('user_input').addEventListener('keydown', function(event) {
+            if (event.keyCode === 13) {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

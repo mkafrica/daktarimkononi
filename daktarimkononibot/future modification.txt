@@ -1,0 +1,3 @@
+take in voice commands 
+use big data for training the chatbot 
+download calendor for drug prescription
